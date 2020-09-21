@@ -43,14 +43,15 @@ public class Pannello extends JPanel{
 		{
 			for (int x = 0; x < size; x++)
 			{
-				if(isInTheSet(x,y,range))
+				/*if(isInTheSet(x,y,range))
 					bi.setRGB(x, y, Color.BLACK.getRGB());
 				else
-					bi.setRGB(x, y, Color.WHITE.getRGB());
+					bi.setRGB(x, y, Color.WHITE.getRGB());*/
+				bi.setRGB(x, y, chooseColor(x, y, range).getRGB());
 			}
 		}
 	}
-	
+	/*
 	boolean isInTheSet(int x, int y, double range)	
 	{
 		ComplexNumber c = pixelToComplex(x, y, range);
@@ -63,6 +64,28 @@ public class Pannello extends JPanel{
 				return false;
 		}
 		return true;
+	}
+	*/
+	
+	Color chooseColor(int x, int y, double range) {
+		ComplexNumber c = pixelToComplex(x, y, range);
+		ComplexNumber z = new ComplexNumber();
+		ComplexNumber ex_z;
+		for (int i = 0; i < iterations; i++) {
+			ex_z=z;
+			z = ComplexNumber.pow(z, 2);
+			z = ComplexNumber.add(z, c);
+			if(z.equals(ex_z))
+			{
+				return Color.BLACK;
+			}
+			if(z.getRe()>=2 || z.getIm()>=2)
+			{
+				//System.out.println((double) i/iterations);
+				return Color.getHSBColor((float) 10*i/iterations, 1, 1);
+			}
+		}
+		return Color.BLACK;
 	}
 	
 	double range(int size, double radius) //range in number line from pixel to pixel
@@ -78,5 +101,11 @@ public class Pannello extends JPanel{
 	{
 		ComplexNumber z = new ComplexNumber((x-size/2)*range+center.getRe(), (y-size/2)*range+center.getIm());
 		return z;
+	}
+	
+	public void redrawMandelbrot(double re, double im, double r) {
+		center = new ComplexNumber(re, im);
+		drawMandelbrot(range(size, r));
+		repaint();
 	}
 }
